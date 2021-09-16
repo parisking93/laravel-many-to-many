@@ -100,8 +100,11 @@ class PostController extends Controller
      */
     public function show($slug)
     {
+        $colorBadge = ['success','warning','info','secondary','danger','primary'];
+        
         $post = Post::where('slug', $slug)->first();
-        return view('admin.posts.show', compact('post'));
+
+        return view('admin.posts.show', compact('post','colorBadge'));
     }
 
     /**
@@ -160,7 +163,7 @@ class PostController extends Controller
 
         $post->update($data);
         if(isset($data['tags'])){
-            
+
             $post->tags()->sync($data['tags']);
         }
         return redirect()->route('admin.posts.index')->with('changed', 'Hai modificato con successo l\'elemento ' . $post->id);  
