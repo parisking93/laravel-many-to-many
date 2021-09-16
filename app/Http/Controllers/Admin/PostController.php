@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 // collego i model 
 use App\Category;
 use App\Post;
+use App\Tag;
 
 
 class PostController extends Controller
@@ -35,7 +36,8 @@ class PostController extends Controller
     public function create()
     {   
         $categories = Category::all();
-        return view('admin.posts.create', compact('categories'));
+        $tags = Tag::all();
+        return view('admin.posts.create', compact('categories', 'tags'));
     }
 
     /**
@@ -57,33 +59,37 @@ class PostController extends Controller
 
 
         $data = $request->all();
-        $new_post = new Post();
+        // dd($data['tags'][0]);
+
+        $newPost = new Post();
         // non funzione con new_post->title  dobbiamo usare $data
 
-        $slug_creato = Str::slug($data['title'], '-');
+        $slugCreato = Str::slug($data['title'], '-');
 
         // controllo se c'è un duplicato
         
         //vedo se è presente uno slug uguale a quello digitato
-        $slug_database = Post::where('slug', $slug_creato)->first();
+        $slugDatabase = Post::where('slug', $slugCreato)->first();
         $contatore = 1;
-        while($slug_database) {
-            $slug_creato .= '-' . $contatore;
+        while($slugDatabase) {
+            $slugCreato .= '-' . $contatore;
 
             // ricontrollo che non ci sia sul database 
-            $slug_database = Post::where('slug', $slug_creato)->first();
+            $slugDatabase = Post::where('slug', $slugCreato)->first();
 
             $contatore++;
         }
 
         // dd( $slug_database );
         // alla fine del controllo lo aggiungo
-        $new_post->slug = $slug_creato;
+        $newPost->slug = $slugCreato;
 
-        $new_post->fill($data);
-        $new_post->save();
-        
-        return redirect()->route('admin.posts.index')->with('add', 'Hai aggiunto con successo l\'elemento ' . $new_post->id);  
+        $newPost->fill($data);
+        $newPost->save();
+        if(isset($data['tags'])){
+            $newPost->tags()->attach($data['tags']);
+        }
+        return redirect()->route('admin.posts.index')->with('add', 'Hai aggiunto con successo l\'elemento ' . $newPost->id);  
     }
 
     /**
@@ -107,7 +113,9 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories = Category::all();
-        return view('admin.posts.edit', compact('post', 'categories'));
+        $tags = Tag::all();
+
+        return view('admin.posts.edit', compact('post', 'categories','tags'));
     }
 
     /**
@@ -151,7 +159,10 @@ class PostController extends Controller
         }
 
         $post->update($data);
-
+        if(isset($data['tags'])){
+            
+            $post->tags()->sync($data['tags']);
+        }
         return redirect()->route('admin.posts.index')->with('changed', 'Hai modificato con successo l\'elemento ' . $post->id);  
     }
 
@@ -164,6 +175,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $post->delete();
+        $post->tags()->detach();
         return redirect()->route('admin.posts.index')->with('delete', 'Hai cancellato con successo l\'elemento ' . $post->id);
     }
 }

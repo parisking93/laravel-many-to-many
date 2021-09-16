@@ -44,6 +44,19 @@
                 <div class="alert alert-danger">{{ $message }}</div>
             @enderror
         </div>
+        <div>
+            <h3>Tags</h3>
+            @foreach ($tags as $k => $tag)
+            <!-- controllo checkbox sia sull'errore che mostrare i gia presenti -->
+            <input class="my-4 mx-2" type="checkbox" id="tag{{$k}}" value="{{$tag->id}}" 
+            @if ($post->tags->contains($tag->id) && $errors)
+                checked
+            @elseif (in_array($tag->id, old('tags', [])))
+                checked
+            @endif name="tags[]" >
+            <label for="tag{{$k}}"> {{$tag->name}}</label>
+            @endforeach
+        </div>
      
         <button type="submit" class="btn btn-primary">Modifica</button>
     </form>
