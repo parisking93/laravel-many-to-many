@@ -12,9 +12,11 @@
                 <p class="card-text">{{$post['content']}}</p>
                 <div class="card-text">
                     <h3 class="card-title">Tags</h3>
-                    @foreach ($post->tags as $tag)
+                    @forelse ($post->tags as $tag)
                     <span class="badge badge-{{$colorBadge[rand(0,count($colorBadge)-1)]}} mb-4">{{$tag->name}}</span>
-                    @endforeach
+                    @empty
+                    <p>Non ci sono tag <a href="{{route('admin.posts.edit', $post->id )}}"> Aggiungine uno --></a></p>
+                    @endforelse
                 </div>
                 <a href="{{ route('admin.posts.edit', $post['id']) }}" class="btn btn-warning">Edit</a>
                 <form action="{{ route('admin.posts.destroy', $post['id']) }}" method="post" class="delete-post mt-2 d-inline-block">
