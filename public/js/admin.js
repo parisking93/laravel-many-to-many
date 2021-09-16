@@ -37690,7 +37690,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/emmanuelparisi/Desktop/Develop/boolean/mamp_public/laravel/laravel-boolpress/resources/js/admin.js */"./resources/js/admin.js");
+module.exports = __webpack_require__(/*! /Users/emmanuelparisi/Desktop/Develop/boolean/mamp_public/laravel/laravel-many-to-many/resources/js/admin.js */"./resources/js/admin.js");
 
 
 /***/ })
